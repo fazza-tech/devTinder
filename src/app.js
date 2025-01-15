@@ -1,17 +1,14 @@
 const express = require('express')
+const {adminAuth,userAuth} = require('./middlewares/auth')
 
 const app = express()
 
-app.use('/Admin', (req,res,next)=>{
-    console.log('admin auth is getting checked...');
-    const token = 'xyz'
-    const authentication = token === 'xyz'
+app.use('/Admin', adminAuth)
 
-    if(!authentication){
-        res.status(404).send("You are not the admin")
-    }else{
-        next()
-    }
+
+
+app.get('/user/login', userAuth, (req,res)=>{
+    res.send('hi user')
 })
 
 app.get('/Admin/getAllData', (req, res) => {
