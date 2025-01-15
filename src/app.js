@@ -2,22 +2,15 @@ const express = require('express')
 
 const app = express()
 
+app.get('/user/getAlldata' , (req,res)=>{
+    const token = "xyz1221"
+    const isAuthorized = token === 'xyz';
 
-app.get("/user/:userId/:password", (req,res) => {
-    console.log(req.params);
-    res.send({firstName :"Fazza", lastname:"Al Mammazrayillakath"})
-})
-
-app.post('/user', (req,res)=>{
-    res.send("Saved data to DB ")
-})
-
-app.delete('/user', (req,res)=>{
-    res.send("Deleted a user")
-})
-
-app.patch('/user', (req,res)=>{
-    res.send("Updated a user  ")
+    if(isAuthorized){
+        res.send('all data display here')
+    }else{
+        res.status(404).send('unothorized sender')
+    }
 })
 
 app.listen(3000, ()=>{
