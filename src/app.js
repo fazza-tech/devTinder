@@ -1,30 +1,30 @@
 const express = require('express')
-const {adminAuth,userAuth} = require('./middlewares/auth')
-
+const { adminAuth, userAuth } = require('./middlewares/auth')
+const connectDB = require('./config/database')
 const app = express()
+const User = require('./models/user')
 
-
-app.get('/user/login', userAuth, (req,res)=>{
-        res.send('hi user')
-        res.status(500).send('Error Happening')
+app.post('/signup', async (req,res)=>{
+    const user = new User({
+        firstName : "Fazal",
+        lastName:"Mammazrayil",
+        emailId : "fazalmammazrayil@gmail.com",
+        password: "gyd54sdsdsjd",
+        age: "23",
+        gender:"Male"
+    })
+    await user.save();
+    res.send("data added")
 })
 
-app.get('/Admin/getAllData', (req, res) => {
-    throw new Error('blabla')
-    res.send('Here the all data')
-})
+connectDB()
+    .then(() => {
+        console.log("Database connection established succesfully.");
+        app.listen(3000, () => {
+            console.log('This app listning server 3000');
+        })
+    })
+    .catch((err) => {
+        console.log("DB cannot be connected");
+    })
 
-app.delete('/Admin/deleteUser', (req, res) => {
-    
-    res.send('deleted a user')
-})
-
-app.use('/', (err,req,res,next) => {
-    if(err){
-        res.status(500).send('Error Happening')
-    }
-})
-
-app.listen(3000, () => {
-    console.log('This app listning server 3000');
-})

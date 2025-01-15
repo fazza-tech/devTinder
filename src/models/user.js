@@ -9,4 +9,4 @@ const userSchema = new mongoose.Schema({
     gender : String
 })
 
-const User = mongoose.model('User', userSchema)
+module.exports = mongoose.model('User', userSchema)
