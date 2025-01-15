@@ -2,17 +2,26 @@ const express = require('express')
 
 const app = express()
 
-app.get('/user/getAlldata' , (req,res)=>{
-    const token = "xyz1221"
-    const isAuthorized = token === 'xyz';
+app.use('/Admin', (req,res,next)=>{
+    console.log('admin auth is getting checked...');
+    const token = 'xyz'
+    const authentication = token === 'xyz'
 
-    if(isAuthorized){
-        res.send('all data display here')
+    if(!authentication){
+        res.status(404).send("You are not the admin")
     }else{
-        res.status(404).send('unothorized sender')
+        next()
     }
 })
 
-app.listen(3000, ()=>{
-    console.log("Server is running on port 3000");
+app.get('/Admin/getAllData', (req, res) => {
+    res.send('Here the all data')
+})
+
+app.delete('/Admin/deleteUser', (req, res) => {
+    res.send('deleted a user')
+})
+
+app.listen(3000, () => {
+    console.log('This app listning server 3000');
 })
