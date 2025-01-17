@@ -4,7 +4,7 @@ const connectDB = require('./config/database')
 const User = require('./models/user') //schema
 
 
-app.use(express.json())
+app.use(express.json())// its a middlware
 
 //only work when we call it
 app.post('/signup', async (req, res) => {
@@ -17,6 +17,36 @@ app.post('/signup', async (req, res) => {
     }
 
 })
+
+//find one user based on filter
+app.get('/users', async (req, res) => {
+    const userEmailId = req.body.emailId;
+
+    try {
+        const users = await User.find({ emailId: userEmailId })
+        if (users === 0) {
+            res.status(404).send("User not found")
+        } else {
+            res.send(users)
+        }
+    }catch(err){
+        res.status(400).send("Something went wrong")
+    }
+     
+   
+})
+//get every users documents
+app.get('/feed' , async (req,res)=>{
+
+    try{
+        const users = await User.find({})
+        res.send(users)
+    }catch(err){
+        res.status(404).status("Something went wrong")
+    }
+})
+
+
 
 connectDB()
     //if that resolve
