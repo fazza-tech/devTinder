@@ -29,24 +29,34 @@ app.get('/users', async (req, res) => {
         } else {
             res.send(users)
         }
-    }catch(err){
+    } catch (err) {
         res.status(400).send("Something went wrong")
     }
-     
-   
+
+
 })
 //get every users documents
-app.get('/feed' , async (req,res)=>{
+app.get('/feed', async (req, res) => {
 
-    try{
+    try {
         const users = await User.find({})
         res.send(users)
-    }catch(err){
+    } catch (err) {
         res.status(404).status("Something went wrong")
     }
 })
 
+//find only one and return only onw based on filter
+app.get('/getOne', async (req, res) => {
+    const userLastName = req.body.lastName;
+    try {
+        const user = await User.findOne({ lastName: userLastName }.exec())
+        res.send(user)
+    } catch (err) {
+        res.status(404).send("Something went wrong")
+    }
 
+})
 
 connectDB()
     //if that resolve
