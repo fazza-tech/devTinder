@@ -70,6 +70,20 @@ app.get('/getById', async (req,res)=>{
     }
 })
 
+//delete user
+app.delete('/user', async (req,res)=>{
+    const userId = req.body._id
+    
+
+try{
+    const user = await User.findByIdAndDelete(userId)
+    res.send("user deleted succesfully ")
+}catch(err){
+    res.status(400).send("something went wrong")
+}
+    
+})
+
 connectDB()
     //if that resolve
     .then(() => {
