@@ -11,17 +11,36 @@ const userSchema = new mongoose.Schema({
     emailId :{
          type:String,
          required:true,
-         unique:true
+         unique:true,
+         lowercase : true,
+         trim : true
     },
     password :{ 
         type:String,
         required:true
     },
     age : {
-        type:String,
+        type:Number,
+        min : 8
     },
     gender : {
-        type:String
+        type:String,
+        validate(value) {
+            if(!["male","female","others"].includes(value)){
+                throw new Error("Gender data is not valid")
+            }
+        }
+    },
+    skills : {
+        type:[String]
+    },
+    about : {
+        type : String,
+        default : "Its a default about for a user"
+    },
+    photourl : {
+        type : String,
+        default : "https://www.pngall.com/wp-content/uploads/5/Profile-PNG-File.png"
     }
 })
 
