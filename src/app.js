@@ -84,6 +84,18 @@ try{
     
 })
 
+//update a user bu id
+app.patch('/user', async (req,res)=>{
+    const userId = req.body._id
+    const name = req.body.firstName
+    try{
+        const user = await User.findByIdAndUpdate(userId,{firstName:name})
+        res.send(`User ${name} updated succecfully`)
+    }catch(err){
+        res.status(400).send("something went wrong...")
+    }
+})
+
 connectDB()
     //if that resolve
     .then(() => {
