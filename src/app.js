@@ -58,6 +58,18 @@ app.get('/getOne', async (req, res) => {
 
 })
 
+//find by id
+app.get('/getById', async (req,res)=>{
+    const userId = req.body._id
+
+    try{
+        const user = await User.findById(userId).exec()
+        res.send(user)
+    }catch(err){
+        res.status(404).send("Error")
+    }
+})
+
 connectDB()
     //if that resolve
     .then(() => {
