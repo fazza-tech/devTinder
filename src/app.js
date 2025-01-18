@@ -59,44 +59,60 @@ app.get('/getOne', async (req, res) => {
 })
 
 //find by id
-app.get('/getById', async (req,res)=>{
+app.get('/getById', async (req, res) => {
     const userId = req.body._id
 
-    try{
+    try {
         const user = await User.findById(userId).exec()
         res.send(user)
-    }catch(err){
+    } catch (err) {
         res.status(404).send("Error")
     }
 })
 
 //delete user
-app.delete('/user', async (req,res)=>{
+app.delete('/user', async (req, res) => {
     const userId = req.body._id
-    
 
-try{
-    const user = await User.findByIdAndDelete(userId)
-    res.send("user deleted succesfully ")
-}catch(err){
-    res.status(400).send("something went wrong")
-}
-    
+
+    try {
+        const user = await User.findByIdAndDelete(userId)
+        res.send("user deleted succesfully ")
+    } catch (err) {
+        res.status(400).send("something went wrong")
+    }
+
 })
 
 //update a user bu id
-app.patch('/user', async (req,res)=>{
-    const userId = req.body._id
+app.patch("/user/:userId", async (req, res) => {
+    const userId = req.params?.userId;
+    
     // const name = req.body.firstName
     // const email = req.body.emailId
     const data = req.body
-    console.log(data);
-    try{
-        const user = await User.findByIdAndUpdate(userId,data)
-        console.log(user);
+
+    try {
+        const ALLOWED_UPDATES = [
+            "firstName",
+            "lastName",
+            "age",
+            "gender",
+            "skills",
+            "about",
+            "photourl"
+        ]
+
+        const isUPDATE_ALLOWED = Object.keys(data).every((k) =>
+            ALLOWED_UPDATES.includes(k)
+        );
+        if (!isUPDATE_ALLOWED) {
+            throw new Error("Update not allowed ")
+        }
+        const user = await User.findByIdAndUpdate(userId, data, { runValidators: true })
         res.send("User updated succesfully")
-    }catch(err){
-        res.status(400).send("something went wrong...")
+    } catch (err) {
+        res.status(400).send("something went wrong..." + err.message)
     }
 })
 
