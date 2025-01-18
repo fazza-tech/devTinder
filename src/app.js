@@ -87,10 +87,14 @@ try{
 //update a user bu id
 app.patch('/user', async (req,res)=>{
     const userId = req.body._id
-    const name = req.body.firstName
+    // const name = req.body.firstName
+    // const email = req.body.emailId
+    const data = req.body
+    console.log(data);
     try{
-        const user = await User.findByIdAndUpdate(userId,{firstName:name})
-        res.send(`User ${name} updated succecfully`)
+        const user = await User.findByIdAndUpdate(userId,data)
+        console.log(user);
+        res.send("User updated succesfully")
     }catch(err){
         res.status(400).send("something went wrong...")
     }
