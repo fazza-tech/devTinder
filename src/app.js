@@ -2,14 +2,29 @@ const express = require('express')
 const app = express()
 const connectDB = require('./config/database')
 const User = require('./models/user') //schema
-
+const {validateSignupData} = require("./utils/validation")
+const bcrypt = require("bcrypt")
 
 app.use(express.json())// its a middlware
 
 //only work when we call it
 app.post('/signup', async (req, res) => {
-    const user = new User(req.body) //creating an instance for Useer Shema
+    
     try {
+        const {firstName,lastName,emailId,password} = req.body
+        //validation of data
+        validateSignupData(req)
+
+        // Encrypt of password
+        const hashPassword = await bcrypt.hash(password,10)
+        console.log(hashPassword);
+        //creating an instance for User schema
+        const user = new User({
+            firstName,
+            lastName,
+            emailId,
+            password: hashPassword
+        }) 
         await user.save(); //requesting for save and waiting for promise
         res.send("data added")
     } catch (err) {
@@ -100,7 +115,8 @@ app.patch("/user/:userId", async (req, res) => {
             "gender",
             "skills",
             "about",
-            "photourl"
+            "photourl",
+            "password"
         ]
 
         const isUPDATE_ALLOWED = Object.keys(data).every((k) =>
