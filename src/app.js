@@ -2,21 +2,23 @@ const express = require('express')
 const app = express()
 const connectDB = require('./config/database')
 const User = require('./models/user') //schema
-const {validateSignupData} = require("./utils/validation")
+const { validateSignupData } = require("./utils/validation")
 const bcrypt = require("bcrypt")
+const cookieParser = require("cookie-parser")
 
 app.use(express.json())// its a middlware
+app.use(cookieParser())//middleware for parsing cookie
 
 //only work when we call it
 app.post('/signup', async (req, res) => {
-    
+
     try {
-        const {firstName,lastName,emailId,password} = req.body
+        const { firstName, lastName, emailId, password } = req.body
         //validation of data
         validateSignupData(req)
 
         // Encrypt of password
-        const hashPassword = await bcrypt.hash(password,10)
+        const hashPassword = await bcrypt.hash(password, 10)
         console.log(hashPassword);
         //creating an instance for User schema
         const user = new User({
@@ -24,13 +26,48 @@ app.post('/signup', async (req, res) => {
             lastName,
             emailId,
             password: hashPassword
-        }) 
+        })
         await user.save(); //requesting for save and waiting for promise
         res.send("data added")
     } catch (err) {
-        res.status(500).send("Error saving the user:" + err.message)
+        res.status(400).send("Error saving the user:" + err.message)
     }
 
+})
+
+app.post('/login', async (req, res) => {
+    try {
+        const { emailId, password } = req.body
+
+        //find email is existing or not inDB
+        const user = await User.findOne({ emailId: emailId })
+        if (!user) {
+            throw new Error("Invalid credentials")
+        }
+
+        const isPasswordValid = await bcrypt.compare(password, user.password)
+        if (isPasswordValid) {
+
+            //create a JWT Token 
+
+
+
+            // Add the token to cookie and send the response back to the user
+            res.cookie('token','uihtrwei5y493yutfiruywygf73rygrwyhfidhgdghwgeyr9')
+            res.send("login succesfull!!!")
+        }else{
+            throw new Error("Invalid credentials")
+        }
+    }catch(err){
+        res.status(400).send("Error saving the user:" + err.message)
+    }
+   
+})
+
+app.get('/profile', async (req,res)=>{
+    const cookie = req.cookies
+    console.log(cookie); 
+    res.send("reading cookie...")
 })
 
 //find one user based on filter
@@ -102,7 +139,7 @@ app.delete('/user', async (req, res) => {
 //update a user bu id
 app.patch("/user/:userId", async (req, res) => {
     const userId = req.params?.userId;
-    
+
     // const name = req.body.firstName
     // const email = req.body.emailId
     const data = req.body
