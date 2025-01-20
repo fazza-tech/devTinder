@@ -5,6 +5,7 @@ const User = require('./models/user') //schema
 const { validateSignupData } = require("./utils/validation")
 const bcrypt = require("bcrypt")
 const cookieParser = require("cookie-parser")
+const jwt = require('jsonwebtoken');
 
 app.use(express.json())// its a middlware
 app.use(cookieParser())//middleware for parsing cookie
@@ -49,11 +50,11 @@ app.post('/login', async (req, res) => {
         if (isPasswordValid) {
 
             //create a JWT Token 
-
-
+            const token = await jwt.sign({_id: user._id},"Fazza$434")
+            console.log(token);
 
             // Add the token to cookie and send the response back to the user
-            res.cookie('token','uihtrwei5y493yutfiruywygf73rygrwyhfidhgdghwgeyr9')
+            res.cookie('token',token)
             res.send("login succesfull!!!")
         }else{
             throw new Error("Invalid credentials")
@@ -65,9 +66,29 @@ app.post('/login', async (req, res) => {
 })
 
 app.get('/profile', async (req,res)=>{
-    const cookie = req.cookies
-    console.log(cookie); 
-    res.send("reading cookie...")
+    try{
+        const cookie = req.cookies
+    
+     const{token} = cookie
+     if(!token){
+        throw new Error("invalid token")
+     }
+
+    //validate the token
+
+    const decodedMessage = await jwt.verify(token,"Fazza$434")
+    const {_id} = decodedMessage;
+    console.log("The user who logges id::"+_id);
+    
+    const user = await User.findById(_id)
+    if(!user){
+        throw new Error("Login again")
+    }
+    res.send(user)
+    }catch(err){
+        res.status(400).send("Error saving the user:" + err.message)
+    }
+    
 })
 
 //find one user based on filter
