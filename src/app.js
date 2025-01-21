@@ -6,6 +6,7 @@ const { validateSignupData } = require("./utils/validation")
 const bcrypt = require("bcrypt")
 const cookieParser = require("cookie-parser")
 const jwt = require('jsonwebtoken');
+const {userAuth} = require("./middlewares/auth")
 
 app.use(express.json())// its a middlware
 app.use(cookieParser())//middleware for parsing cookie
@@ -65,25 +66,10 @@ app.post('/login', async (req, res) => {
    
 })
 
-app.get('/profile', async (req,res)=>{
+app.get('/profile',userAuth, async (req,res)=>{
     try{
-        const cookie = req.cookies
+    const user = req.user;
     
-     const{token} = cookie
-     if(!token){
-        throw new Error("invalid token")
-     }
-
-    //validate the token
-
-    const decodedMessage = await jwt.verify(token,"Fazza$434")
-    const {_id} = decodedMessage;
-    console.log("The user who logges id::"+_id);
-    
-    const user = await User.findById(_id)
-    if(!user){
-        throw new Error("Login again")
-    }
     res.send(user)
     }catch(err){
         res.status(400).send("Error saving the user:" + err.message)
@@ -96,52 +82,49 @@ app.get('/users', async (req, res) => {
     const userEmailId = req.body.emailId;
 
     try {
-        const users = await User.find({ emailId: userEmailId })
-        if (users === 0) {
-            res.status(404).send("User not found")
+        const users = await User.find({ emailId: userEmailId });
+        if (users.length === 0) {
+            res.status(404).send("User not found");
         } else {
-            res.send(users)
+            res.send(users);
         }
     } catch (err) {
-        res.status(400).send("Something went wrong")
+        res.status(400).send("Something went wrong");
     }
+});
 
-
-})
 //get every users documents
 app.get('/feed', async (req, res) => {
-
     try {
-        const users = await User.find({})
-        res.send(users)
+        const users = await User.find({});
+        res.send(users);
     } catch (err) {
-        res.status(404).status("Something went wrong")
+        res.status(404).send("Something went wrong");
     }
-})
+});
 
-//find only one and return only onw based on filter
+//find only one and return only one based on filter
 app.get('/getOne', async (req, res) => {
     const userLastName = req.body.lastName;
     try {
-        const user = await User.findOne({ lastName: userLastName }.exec())
-        res.send(user)
+        const user = await User.findOne({ lastName: userLastName });
+        res.send(user);
     } catch (err) {
-        res.status(404).send("Something went wrong")
+        res.status(404).send("Something went wrong");
     }
-
-})
+});
 
 //find by id
 app.get('/getById', async (req, res) => {
-    const userId = req.body._id
+    const userId = req.body._id;
 
     try {
-        const user = await User.findById(userId).exec()
-        res.send(user)
+        const user = await User.findById(userId);
+        res.send(user);
     } catch (err) {
-        res.status(404).send("Error")
+        res.status(404).send("Error");
     }
-})
+});
 
 //delete user
 app.delete('/user', async (req, res) => {
@@ -202,4 +185,3 @@ connectDB()
     .catch((err) => {
         console.log("DB cannot be connected");
     })
-
