@@ -51,7 +51,7 @@ app.post('/login', async (req, res) => {
         if (isPasswordValid) {
 
             //create a JWT Token 
-            const token = await jwt.sign({_id: user._id},"Fazza$434")
+            const token = await jwt.sign({_id: user._id},"Fazza$434",{expiresIn :"1d"})
             console.log(token);
 
             // Add the token to cookie and send the response back to the user
@@ -171,6 +171,12 @@ app.patch("/user/:userId", async (req, res) => {
     } catch (err) {
         res.status(400).send("something went wrong..." + err.message)
     }
+})
+
+app.post('/sendConnectionRequest',userAuth, async (req,res)=>{
+    const user = req.user
+    console.log(user);
+    res.send(user.firstName+" send a connection request!!")
 })
 
 connectDB()
