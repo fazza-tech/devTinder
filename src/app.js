@@ -9,8 +9,9 @@ app.use(express.json())// its a middlware
 app.use(cookieParser())//middleware for parsing cookie
 
 const authRouter = require("./routes/auth")
+const profileRouter = require("./routes/profile")
 
-app.use("/", authRouter)
+app.use("/", authRouter, profileRouter)
 
 
 
@@ -18,16 +19,7 @@ app.use("/", authRouter)
 
 
 
-app.get('/profile',userAuth, async (req,res)=>{
-    try{
-    const user = req.user;
-    
-    res.send(user)
-    }catch(err){
-        res.status(400).send("Error saving the user:" + err.message)
-    }
-    
-})
+
 
 //find one user based on filter
 app.get('/users', async (req, res) => {
