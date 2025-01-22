@@ -10,8 +10,9 @@ app.use(cookieParser())//middleware for parsing cookie
 
 const authRouter = require("./routes/auth")
 const profileRouter = require("./routes/profile")
+const requestRouter = require("./routes/request")
 
-app.use("/", authRouter, profileRouter)
+app.use("/", authRouter, profileRouter, requestRouter)
 
 
 
@@ -117,11 +118,7 @@ app.patch("/user/:userId", async (req, res) => {
     }
 })
 
-app.post('/sendConnectionRequest',userAuth, async (req,res)=>{
-    const user = req.user
-    console.log(user);
-    res.send(user.firstName+" send a connection request!!")
-})
+
 
 connectDB()
     //if that resolve
