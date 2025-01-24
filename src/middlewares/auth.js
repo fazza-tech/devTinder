@@ -12,7 +12,7 @@ const userAuth = async (req, res, next) => {
     }
 
     const decodedObj = await jwt.verify(token, "Fazza$434")
-    console.log(decodedObj);
+    
     const { _id } = decodedObj;
     const user = await User.findById(_id)
     if (!user) {
@@ -25,6 +25,4 @@ const userAuth = async (req, res, next) => {
 }
 }
 
-module.exports = {
-     userAuth
-}
+module.exports = { userAuth }

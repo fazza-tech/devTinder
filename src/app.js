@@ -4,7 +4,7 @@ const connectDB = require('./config/database')
 const User = require('./models/user') //schema
 
 const cookieParser = require("cookie-parser")
-const {userAuth} = require("./middlewares/auth")
+
 app.use(express.json())// its a middlware
 app.use(cookieParser())//middleware for parsing cookie
 
