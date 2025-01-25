@@ -25,6 +25,6 @@ const connectionRequest = new mongoose.Schema(
         timestamps: true
     })
 
-    const ConnectionRequest = new mongoose.model("ConnectionRequest", ConnectionRequest)
+    const ConnectionRequest = new mongoose.model("ConnectionRequest", connectionRequest)
 
     module.exports = ConnectionRequest;
