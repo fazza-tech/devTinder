@@ -2,7 +2,7 @@ const express = require("express")
 const {userAuth} = require("../middlewares/auth")
 const requestRouter = express.Router()
 const ConnectionRequest = require("../models/connectionRequest")
-
+const User = require("../models/user")
 
 
 requestRouter.post('/request/send/:status/:toUserId',userAuth, async (req,res)=>{
@@ -19,6 +19,14 @@ requestRouter.post('/request/send/:status/:toUserId',userAuth, async (req,res)=>
             .json({message:"Invalid status type: " +status})
         }
 
+        //If there is no userID exizt in our DB
+        const toUser = await User.findById(toUserId)
+        if(!toUser){
+            return res  
+                    .status(400)
+                    .send({message:"User not found"})
+        }
+
         //If there is any exixsting connection
         const existingConnectionRequest = await ConnectionRequest.findOne({
             $or:[{fromUserId,toUserId},
@@ -30,6 +38,8 @@ requestRouter.post('/request/send/:status/:toUserId',userAuth, async (req,res)=>
                     .status(400)
                     .send({message:"Connection request already exist"})
         }
+
+        
 
         const connectionRequest = new ConnectionRequest({
             fromUserId,
