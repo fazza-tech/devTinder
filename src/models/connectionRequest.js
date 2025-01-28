@@ -25,6 +25,13 @@ const connectionRequest = new mongoose.Schema(
         timestamps: true
     })
 
+    connectionRequest.pre('save', function(next) {
+        if(this.fromUserId.equals(this.toUserId)){
+            throw new Error("Cannot send request yourself")
+        }
+        next();
+      });
+
     const ConnectionRequest = new mongoose.model("ConnectionRequest", connectionRequest)
 
     module.exports = ConnectionRequest;
