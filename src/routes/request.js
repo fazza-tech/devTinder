@@ -14,7 +14,21 @@ requestRouter.post('/request/send/:status/:toUserId',userAuth, async (req,res)=>
         const allowedStatus = ["ignored","interested"]
 
         if(!allowedStatus.includes(status)){
-            return res.status(400).send("Invalid status type")
+            return res
+            .status(400)
+            .json({message:"Invalid status type: " +status})
+        }
+
+        //If there is any exixsting connection
+        const existingConnectionRequest = await ConnectionRequest.findOne({
+            $or:[{fromUserId,toUserId},
+                {fromUserId:toUserId, toUserId:fromUserId}
+            ]
+        })
+        if(existingConnectionRequest) {
+            return res
+                    .status(400)
+                    .send({message:"Connection request already exist"})
         }
 
         const connectionRequest = new ConnectionRequest({
