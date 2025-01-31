@@ -16,7 +16,7 @@ authRouter.post('/signup', async (req, res) => {
 
         // Encrypt of password
         const hashPassword = await bcrypt.hash(password, 10)
-        console.log(hashPassword);
+        
         //creating an instance for User schema
         const user = new User({
             firstName,
@@ -54,7 +54,7 @@ authRouter.post('/login', async (req, res) => {
             res.cookie('token', token, {
                 expires: new Date(Date.now() + 8 * 3600000)
             })
-            res.send("login succesfull!!!")
+            res.json({ message: "Login successful!", token });
         } else {
             throw new Error("Invalid credentials")
         }

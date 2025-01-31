@@ -36,6 +36,6 @@ const connectionRequestSchema = new mongoose.Schema(
         next();
       });
 
-    const ConnectionRequest = new mongoose.model("ConnectionRequest", connectionRequestSchema)
+    const ConnectionRequest = mongoose.model("ConnectionRequest", connectionRequestSchema)
 
     module.exports = ConnectionRequest;
